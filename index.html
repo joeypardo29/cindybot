@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Gemini Chat</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="index.css" />
+    <script type="importmap">
+{
+  "imports": {
+    "marked": "https://esm.sh/marked@^15.0.7"
+  }
+}
+</script>
+    <script type="module" src="index.tsx" defer></script>
+  <link rel="stylesheet" href="/index.css">
+</head>
+  <body>
+    <main>
+      <h1>Gemini Chat</h1>
+      <div id="chat-container">
+        <div id="chat-history"></div>
+      </div>
+      <form id="chat-form" aria-label="Chat form">
+        <textarea
+          name="chat-input"
+          id="chat-input"
+          placeholder="Enter your message..."
+          aria-label="Chat input"
+          rows="1"
+        ></textarea>
+        <button type="submit" id="send-button" aria-label="Send message" disabled>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            width="24"
+            height="24"
+          >
+            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+          </svg>
+        </button>
+      </form>
+    </main>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>
