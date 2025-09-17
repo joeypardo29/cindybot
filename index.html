@@ -1,25 +1,32 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Gemini Chat</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="utf-8" />
+    <title>Cindybot</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Use RELATIVE path (works under /cindybot.github.io/) -->
     <link rel="stylesheet" href="index.css" />
+
+    <!-- Only keep marked in the import map -->
     <script type="importmap">
-{
-  "imports": {
-    "marked": "https://esm.sh/marked@^15.0.7"
-  }
-}
-</script>
+    {
+      "imports": {
+        "marked": "https://esm.sh/marked@^15.0.7"
+      }
+    }
+    </script>
+
+    <!-- Single module script, RELATIVE path, and defer -->
     <script type="module" src="index.tsx" defer></script>
-  <link rel="stylesheet" href="/index.css">
-</head>
+  </head>
   <body>
     <main>
-      <h1>Gemini Chat</h1>
+      <h1>Cindybot</h1>
       <div id="chat-container">
         <div id="chat-history"></div>
       </div>
+
       <form id="chat-form" aria-label="Chat form">
         <textarea
           name="chat-input"
@@ -28,19 +35,15 @@
           aria-label="Chat input"
           rows="1"
         ></textarea>
-        <button type="submit" id="send-button" aria-label="Send message" disabled>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-            width="24"
-            height="24"
-          >
+
+        <!-- Remove 'disabled' so the button isn't stuck if JS fails to attach -->
+        <button type="submit" id="send-button" aria-label="Send message">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+               fill="currentColor" width="24" height="24">
             <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
           </svg>
         </button>
       </form>
     </main>
-  <script type="module" src="/index.tsx"></script>
-</body>
+  </body>
 </html>
