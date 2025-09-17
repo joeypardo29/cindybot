@@ -7,7 +7,7 @@ export default defineConfig(({ mode }) => {
 
   return {
     // Your app lives at /cindybot.github.io/
-    base: "/cindybot",
+    base: "/cindybot/",
 
     plugins: [],
 
