@@ -15,7 +15,7 @@ if (!chatHistory || !chatForm || !chatInput || !sendButton) {
 }
 
 // ✅ Set this to your Apps Script Web App URL
-const OPENAI_PROXY_URL = "https://script.google.com/a/macros/wexinc.com/s/AKfycbxoJHpFVCczgkphvbsePSv2xMIPWI9ZB_65QHQGqU8IYLihrxPry9Z-_Sxm0Gb8XCe89Q/exec";
+const OPENAI_PROXY_URL = "https://script.google.com/macros/s/AKfycbyhSZY1DyzD0ehJuklefhIsDkCEH0dkFiE6btU4lmvTQbnZb4bLM4cXueQPhnGXkvuu/exec";
 
 // Render helper (unchanged)
 function addMessageToHistory(role: 'user' | 'model', text: string): HTMLDivElement {
