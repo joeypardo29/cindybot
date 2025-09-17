@@ -41,40 +41,66 @@ async function handleFormSubmit(event: SubmitEvent) {
   modelEl.classList.add('thinking');
 
   try {
-    // Request OpenAI Responses API via your proxy
-    const res = await fetch(OPENAI_PROXY_URL, {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({
-        model: 'gpt-4o-mini',
-        input: userInput
-      })
-    });
+  const res = await fetch(OPENAI_PROXY_URL, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ model: 'gpt-4o-mini', input: userInput })
+  });
 
-    const data = await res.json();
+  const raw = await res.text();
+  console.log('proxy status:', res.status, 'body:', raw.slice(0, 500));
 
-    // Extract text (handles different shapes defensively)
-    const text =
-      data.output_text ??
-      data.output?.map((p: any) =>
-        p.content?.map((c: any) => c?.text ?? '').join('')
-      ).join('') ??
-      data.response?.output_text ??
-      JSON.stringify(data);
-
-    // Clear input and show answer
-    chatInput.value = '';
-    chatInput.style.height = 'auto';
-    modelEl.innerHTML = marked.parse(text) as string;
-  } catch (err) {
-    console.error(err);
-    modelEl.innerHTML = marked.parse('🔴 Sorry, something went wrong. Please try again.') as string;
-  } finally {
-    modelEl.classList.remove('thinking');
-    chatInput.disabled = false;
-    chatInput.focus();
-    sendButton.disabled = !chatInput.value.trim() || chatInput.disabled;
+  let data: any;
+  try {
+    data = JSON.parse(raw);
+  } catch {
+    // Show non-JSON bodies (e.g., HTML, errors) right in the chat
+    modelEl.innerHTML = marked.parse(
+      "🔴 Proxy returned non-JSON:\n```\n" + raw.slice(0, 2000) + "\n```"
+    ) as string;
+    return;
   }
+
+  if (!res.ok || data?.error) {
+    modelEl.innerHTML = marked.parse(
+      "🔴 Proxy error:\n```json\n" + JSON.stringify(data ?? { status: res.status, raw }, null, 2) + "\n```"
+    ) as string;
+    return;
+  }
+
+  // ---- robust text extraction ----
+  let text =
+    // a) convenience field (sometimes present)
+    (typeof data.output_text === 'string' ? data.output_text : '') ||
+    // b) your observed shape: output -> [{ content: [{ text: "..." }, ...] }, ...]
+    (Array.isArray(data.output)
+      ? data.output.map((p: any) =>
+          Array.isArray(p?.content)
+            ? p.content.map((c: any) => (typeof c?.text === 'string' ? c.text : '')).join('')
+            : ''
+        ).join('')
+      : '') ||
+    // c) classic chat shapes fallback
+    (Array.isArray(data.choices) && data.choices[0]?.message?.content
+      ? data.choices[0].message.content
+      : '') ||
+    // d) final fallback: show what we got
+    "Unexpected response:\n```json\n" + JSON.stringify(data, null, 2) + "\n```";
+
+  // Clear input and show answer
+  chatInput.value = '';
+  chatInput.style.height = 'auto';
+  modelEl.innerHTML = marked.parse(text) as string;
+} catch (err: any) {
+  console.error(err);
+  modelEl.innerHTML = marked.parse(
+    "🔴 Network/JS error:\n```\n" + (err?.message || String(err)) + "\n```"
+  ) as string;
+} finally {
+  modelEl.classList.remove('thinking');
+  chatInput.disabled = false;
+  chatInput.focus();
+  sendButton.disabled = !chatInput.value.trim() || chatInput.disabled;
 }
 
 // Events (unchanged)
