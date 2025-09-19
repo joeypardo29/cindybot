@@ -1,15 +1,24 @@
+# .github/workflows/build-artifact.yml
 name: Build Vite (artifact only)
+
 on:
-  workflow_dispatch:
+  workflow_dispatch: {}
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
-        with: { node-version: 20 }
-      - run: npm ci
+        with:
+          node-version: 20
+          cache: npm
+
+      # no lockfile? use install instead of ci
+      - run: npm install --no-fund --no-audit
       - run: npm run build
+
       - uses: actions/upload-artifact@v4
         with:
           name: dist
