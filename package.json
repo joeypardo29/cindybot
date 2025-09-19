@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "postbuild": "cp dist/index.html dist/404.html",  // optional but helpful for SPA routes
+    "postbuild": "cp dist/index.html dist/404.html",
     "preview": "vite preview"
   },
   "dependencies": {
