@@ -6,7 +6,7 @@ import "./index.css";
 
 // ---- CONFIG ----
 const OPENAI_PROXY_URL =
-  "https://script.google.com/macros/s/AKfycbyIPjoCn-LPdxY6Px6BS7Gxjh_Lk_ZO8PGY5NFyPCoZ325pJumJFkXmpi5ITZEYrB1e/exec"; // <-- your working Apps Script URL
+  "https://script.google.com/macros/s/AKfycbzGoESi22fNVlAP-87cYHk4BdX-OX48JzgMjYxTBI8LvQcbXWj0HKg1_33G52F6Ycu6/exec"; // <-- your working Apps Script URL
 
 // Session-only persona (edit as you like)
 const INSTRUCTIONS = `
