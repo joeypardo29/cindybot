@@ -1,51 +1,22 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
     <meta charset="utf-8" />
     <title>CindyBot</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-    <!-- Use RELATIVE path (works under /cindybot.github.io/) -->
-
-    <!-- Only keep marked in the import map -->
-
-
-    <!-- Single module script, RELATIVE path, and defer -->
-
-    <script type="importmap">
-    {
-      "imports": {
-        "marked": "https://esm.sh/marked@^15.0.7"
-      }
-    }
-    </script>
-    <script type="module" crossorigin src="/cindybot/assets/index-NW4KaM86.js"></script>
-    <link rel="stylesheet" crossorigin href="/cindybot/assets/index--hvRBeJH.css">
   </head>
   <body>
     <main>
       <h1>CindyBot</h1>
-      <div id="chat-container">
-        <div id="chat-history"></div>
-      </div>
+      <div id="chat-container"><div id="chat-history"></div></div>
 
       <form id="chat-form" aria-label="Chat form">
-        <textarea
-          name="chat-input"
-          id="chat-input"
-          placeholder="Enter your message..."
-          aria-label="Chat input"
-          rows="1"
-        ></textarea>
-
-        <!-- Remove 'disabled' so the button isn't stuck if JS fails to attach -->
-        <button type="submit" id="send-button" aria-label="Send message">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-               fill="currentColor" width="24" height="24">
-            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
-          </svg>
-        </button>
+        <textarea id="chat-input" rows="1" placeholder="Enter your message..."></textarea>
+        <button id="send-button" type="submit" aria-label="Send message">Send</button>
       </form>
     </main>
+
+    <!-- IMPORTANT: point to your *source* file, not /assets/index-xxxx.js -->
+    <script type="module" src="/index.tsx"></script>
   </body>
 </html>
