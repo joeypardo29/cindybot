@@ -1,11 +1,20 @@
 // index.tsx
-// Frontend for Cindybot: posts to your Apps Script proxy and renders replies.
+// Frontend for CindyBot: posts to your Apps Script proxy and renders replies.
 
 import { marked } from "marked";
 
 // ---- CONFIG ----
 const OPENAI_PROXY_URL =
   "https://script.google.com/macros/s/AKfycbzRo0l05nMVvXYydDw9tkwSZDHP6J2LNZQ-RHo7aITnA7_pQM4hMDXUjLlZ45cdu2LI/exec"; // <-- your working Apps Script URL
+
+// Session-only persona (edit as you like)
+const INSTRUCTIONS = `
+You are CindyBot for Joseph.
+- Be concise and friendly, use markdown.
+- Prefer bullet points, max 8 lines unless asked.
+- For code, TypeScript first; include minimal runnable snippets.
+- If an error occurs, show a one-line reason then a fix.
+`;
 
 console.log("cindybot: script loaded");
 
@@ -34,12 +43,12 @@ function setFormEnabled(enabled: boolean) {
   sendButton!.disabled = !enabled || !chatInput!.value.trim();
 }
 
-// ---- API ----
+// ---- API helpers ----
 function extractOpenAIText(data: any): string {
   // a) convenience field (sometimes present)
   if (typeof data?.output_text === "string") return data.output_text;
 
-  // b) Responses API shape (your test output)
+  // b) Responses API shape
   if (Array.isArray(data?.output)) {
     const joined = data.output
       .map((msg: any) =>
@@ -59,26 +68,36 @@ function extractOpenAIText(data: any): string {
   return "Unexpected response:\n```json\n" + JSON.stringify(data, null, 2) + "\n```";
 }
 
+// ---- API call ----
 async function askOpenAI(prompt: string): Promise<string> {
-  const form = new URLSearchParams();
-  form.set("body", JSON.stringify({ model: "gpt-4o-mini", input: prompt }));
+  // Build Responses API payload
+  const payload = {
+    model: "gpt-4o-mini",
+    instructions: INSTRUCTIONS,                  // session-only persona
+    input: [{ role: "user", content: prompt }],  // structured input
+    temperature: 0.4
+  };
 
-  const res = await fetch(OPENAI_PROXY_URL, {
-    method: "POST",
-    body: form, // -> browser sets Content-Type: application/x-www-form-urlencoded
-  });
+  // Keep CORS simple: form-encode the JSON string (preflight-free)
+  const form = new URLSearchParams();
+  form.set("body", JSON.stringify(payload));
+
+  const res = await fetch(OPENAI_PROXY_URL, { method: "POST", body: form });
 
   const raw = await res.text();
   let data: any;
-  try { data = JSON.parse(raw); } 
-  catch { return "Proxy returned non-JSON:\n```\n" + raw.slice(0, 2000) + "\n```"; }
+  try {
+    data = JSON.parse(raw);
+  } catch {
+    return "Proxy returned non-JSON:\n```\n" + raw.slice(0, 2000) + "\n```";
+  }
 
   if (!res.ok || data?.error) {
     return "🔴 Proxy error:\n```json\n" + JSON.stringify(data ?? { status: res.status, raw }, null, 2) + "\n```";
   }
+
   return extractOpenAIText(data);
 }
-
 
 // ---- Events ----
 chatForm.addEventListener("submit", async (e) => {
