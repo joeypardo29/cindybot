@@ -71,32 +71,27 @@ function extractOpenAIText(data: any): string {
 
 // ---- API call ----
 async function askOpenAI(prompt: string): Promise<string> {
-  // Build Responses API payload
   const payload = {
     model: "gpt-4o-mini",
-    instructions: INSTRUCTIONS,                  // session-only persona
-    input: [{ role: "user", content: prompt }],  // structured input
-    temperature: 0.4
+    instructions: INSTRUCTIONS,
+    input: [{ role: "user", content: prompt }],
+    temperature: 0.4,
   };
 
-  // Keep CORS simple: form-encode the JSON string (preflight-free)
-  const form = new URLSearchParams();
-  form.set("body", JSON.stringify(payload));
-
-  const res = await fetch(OPENAI_PROXY_URL, { method: "POST", body: form });
+  // ✅ Raw string body, NO headers -> simple request, no preflight
+  const res = await fetch(OPENAI_PROXY_URL, {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
 
   const raw = await res.text();
   let data: any;
-  try {
-    data = JSON.parse(raw);
-  } catch {
-    return "Proxy returned non-JSON:\n```\n" + raw.slice(0, 2000) + "\n```";
-  }
+  try { data = JSON.parse(raw); }
+  catch { return "Proxy returned non-JSON:\n```\n" + raw.slice(0, 2000) + "\n```"; }
 
   if (!res.ok || data?.error) {
     return "🔴 Proxy error:\n```json\n" + JSON.stringify(data ?? { status: res.status, raw }, null, 2) + "\n```";
   }
-
   return extractOpenAIText(data);
 }
 
