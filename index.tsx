@@ -2,6 +2,7 @@
 // Frontend for CindyBot: posts to your Apps Script proxy and renders replies.
 
 import { marked } from "marked";
+import "./index.css";
 
 // ---- CONFIG ----
 const OPENAI_PROXY_URL =
