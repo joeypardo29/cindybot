@@ -62,10 +62,11 @@ function extractOpenAIText(data: any): string {
 async function askOpenAI(prompt: string): Promise<string> {
   const res = await fetch(OPENAI_PROXY_URL, {
     method: "POST",
-    headers: { "content-type": "application/json" },
+    // ✅ No headers at all (prevents preflight)
     body: JSON.stringify({ model: "gpt-4o-mini", input: prompt })
   });
 
+  // Parse response (still JSON even though we didn’t set Accept)
   const raw = await res.text();
   let data: any;
   try {
@@ -80,6 +81,7 @@ async function askOpenAI(prompt: string): Promise<string> {
 
   return extractOpenAIText(data);
 }
+
 
 // ---- Events ----
 chatForm.addEventListener("submit", async (e) => {
