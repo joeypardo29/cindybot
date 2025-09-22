@@ -5,7 +5,7 @@ import { marked } from "marked";
 
 // ---- CONFIG ----
 const OPENAI_PROXY_URL =
-  "https://script.google.com/macros/s/AKfycbyhSZY1DyzD0ehJuklefhIsDkCEH0dkFiE6btU4lmvTQbnZb4bLM4cXueQPhnGXkvuu/exec"; // <-- your working Apps Script URL
+  "https://script.google.com/macros/s/AKfycbzRo0l05nMVvXYydDw9tkwSZDHP6J2LNZQ-RHo7aITnA7_pQM4hMDXUjLlZ45cdu2LI/exec"; // <-- your working Apps Script URL
 
 console.log("cindybot: script loaded");
 
