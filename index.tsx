@@ -73,15 +73,18 @@ function extractOpenAIText(data: any): string {
 async function askOpenAI(prompt: string): Promise<string> {
   const payload = {
     model: "gpt-4o-mini",
-    instructions: INSTRUCTIONS,
+    instructions: INSTRUCTIONS,                 // ✅ keep your persona
     input: [{ role: "user", content: prompt }],
     temperature: 0.4,
   };
 
-  // ✅ Raw string body, NO headers -> simple request, no preflight
+  // ✅ No headers; let the browser set application/x-www-form-urlencoded
+  const form = new URLSearchParams();
+  form.set("body", JSON.stringify(payload));
+
   const res = await fetch(OPENAI_PROXY_URL, {
     method: "POST",
-    body: JSON.stringify(payload),
+    body: form,
   });
 
   const raw = await res.text();
@@ -90,8 +93,10 @@ async function askOpenAI(prompt: string): Promise<string> {
   catch { return "Proxy returned non-JSON:\n```\n" + raw.slice(0, 2000) + "\n```"; }
 
   if (!res.ok || data?.error) {
-    return "🔴 Proxy error:\n```json\n" + JSON.stringify(data ?? { status: res.status, raw }, null, 2) + "\n```";
+    return "🔴 Proxy error:\n```json\n" +
+      JSON.stringify(data ?? { status: res.status, raw }, null, 2) + "\n```";
   }
+
   return extractOpenAIText(data);
 }
 
