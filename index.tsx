@@ -60,25 +60,22 @@ function extractOpenAIText(data: any): string {
 }
 
 async function askOpenAI(prompt: string): Promise<string> {
+  const form = new URLSearchParams();
+  form.set("body", JSON.stringify({ model: "gpt-4o-mini", input: prompt }));
+
   const res = await fetch(OPENAI_PROXY_URL, {
     method: "POST",
-    // ✅ No headers at all (prevents preflight)
-    body: JSON.stringify({ model: "gpt-4o-mini", input: prompt })
+    body: form, // -> browser sets Content-Type: application/x-www-form-urlencoded
   });
 
-  // Parse response (still JSON even though we didn’t set Accept)
   const raw = await res.text();
   let data: any;
-  try {
-    data = JSON.parse(raw);
-  } catch {
-    return "Proxy returned non-JSON:\n```\n" + raw.slice(0, 2000) + "\n```";
-  }
+  try { data = JSON.parse(raw); } 
+  catch { return "Proxy returned non-JSON:\n```\n" + raw.slice(0, 2000) + "\n```"; }
 
   if (!res.ok || data?.error) {
     return "🔴 Proxy error:\n```json\n" + JSON.stringify(data ?? { status: res.status, raw }, null, 2) + "\n```";
   }
-
   return extractOpenAIText(data);
 }
 
